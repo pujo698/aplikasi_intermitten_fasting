@@ -7,7 +7,14 @@ class DietCalculator {
   static DietResult calculate(UserProfile user) {
     final bmr = _calculateBMR(user);
     final tdee = _calculateTDEE(bmr, user.activity);
-    final calories = _adjustByGoal(tdee, user.goal);
+    var calories = _adjustByGoal(tdee, user.goal);
+
+    // 4️⃣ Calorie Guardrail (Medical Safety)
+    // Mencegah defisit ekstrem yang merusak metabolisme & hormon
+    double minLimit = (user.gender == Gender.male) ? 1500 : 1200;
+    if (calories < minLimit) {
+      calories = minLimit;
+    }
 
     final macros = _calculateMacros(calories, user.goal);
 
@@ -87,5 +94,32 @@ class DietCalculator {
       'carbs': carbs,
       'fat': fat,
     };
+  }
+
+  static int calculateWeightLossDurationInMonths(double currentWeight, double targetWeight, int eatingHours) {
+    if (targetWeight >= currentWeight) return 0;
+    
+    final diff = currentWeight - targetWeight;
+    
+    // Adjust monthly loss estimation based on Fasting Intensity
+    // 16:8 (8h) is standard ~2.5kg
+    // OMAD (1h) is faster ~3.5kg
+    // 12h+ is slower ~1.5kg
+    
+    double monthlyLoss = 2.0;
+
+    if (eatingHours <= 1) {
+      monthlyLoss = 3.5; // Extreme/OMAD
+    } else if (eatingHours <= 6) {
+      monthlyLoss = 3.0; // Warrior/20:4
+    } else if (eatingHours <= 8) {
+      monthlyLoss = 2.5; // 16:8
+    } else if (eatingHours <= 10) {
+      monthlyLoss = 1.8; // 14:10
+    } else {
+      monthlyLoss = 1.5; // Normal diet
+    }
+    
+    return (diff / monthlyLoss).ceil();
   }
 }

@@ -9,6 +9,7 @@ class UserProfile {
   final double height;
   final ActivityLevel activity;
   final DietGoal goal;
+  final double? targetWeight;
 
   UserProfile({
     required this.gender,
@@ -17,5 +18,6 @@ class UserProfile {
     required this.height,
     required this.activity,
     required this.goal,
+    this.targetWeight,
   });
 }

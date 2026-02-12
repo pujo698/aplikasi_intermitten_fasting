@@ -54,6 +54,39 @@ class StorageService {
     await prefs.setStringList(_records, list);
   }
 
+  static const _userProfile = 'user_profile';
+
+  static Future saveUserProfile({
+    required int age,
+    required double weight,
+    required double height,
+    required String gender,
+    required String activity,
+    required String goal,
+    double? targetWeight,
+    int? estimatedMonths,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = {
+      'age': age,
+      'weight': weight,
+      'height': height,
+      'gender': gender,
+      'activity': activity,
+      'goal': goal,
+      'targetWeight': targetWeight,
+      'estimatedMonths': estimatedMonths,
+    };
+    await prefs.setString(_userProfile, jsonEncode(data));
+  }
+
+  static Future<Map<String, dynamic>?> loadUserProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonStr = prefs.getString(_userProfile);
+    if (jsonStr == null) return null;
+    return jsonDecode(jsonStr);
+  }
+
   static Future<List<FastingRecord>> loadRecords() async {
     final prefs = await SharedPreferences.getInstance();
     final list = prefs.getStringList(_records) ?? [];

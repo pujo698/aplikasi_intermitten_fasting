@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import '../models/diet_result.dart';
+import '../models/meal_slot.dart';
 
 class DietResultScreen extends StatelessWidget {
   final DietResult result;
+  final List<MealSlot> meals;
 
   const DietResultScreen({
     super.key,
     required this.result,
+    required this.meals,
   });
 
   @override
@@ -15,7 +18,7 @@ class DietResultScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Hasil Diet Kamu"),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +91,7 @@ class DietResultScreen extends StatelessWidget {
               color: Colors.blue,
             ),
 
-            const Spacer(),
+            const SizedBox(height: 24),
 
             /// ⚠️ DISCLAIMER
             Container(
@@ -112,8 +115,119 @@ class DietResultScreen extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 24),
+
+            /// ⏰ MEAL SCHEDULE
+            if (meals.isNotEmpty) ...[
+              const Text(
+                "Rekomendasi Jam Makan",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              ...meals.map((m) => Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.schedule, color: Colors.green),
+                      ),
+                      title: Text(
+                        "${m.time.hour.toString().padLeft(2, '0')}:${m.time.minute.toString().padLeft(2, '0')}",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        "${m.calories} kcal | P ${m.protein}g | C ${m.carbs}g | F ${m.fat}g",
+                        style: TextStyle(color: Colors.grey[700]),
+                      ),
+                    ),
+                  )),
+              const SizedBox(height: 24),
+            ],
+            /// 🥗 LOCAL MENU GUIDE
+            const Text(
+              "Panduan Makanan Lokal",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.green[50],
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.green.withOpacity(0.3)),
+              ),
+              child: const Column(
+                children: [
+                   _FoodItem(icon: "🍚", title: "Karbohidrat", desc: "Nasi Merah, Ubi, Jagung"),
+                   Divider(),
+                   _FoodItem(icon: "🍗", title: "Protein", desc: "Tempe, Tahu, Dada Ayam, Ikan"),
+                   Divider(),
+                   _FoodItem(icon: "🥦", title: "Serat", desc: "Sayur Bayam, Kangkung, Brokoli"),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            /// 💧 HYDRATION GUIDE
+            const Text(
+              "Aturan Minum Saat Puasa",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.blue.withOpacity(0.3)),
+              ),
+              child: const Column(
+                children: [
+                   _FoodItem(icon: "💧", title: "Air Putih", desc: "Wajib! Minum 2-3 liter/hari"),
+                   Divider(),
+                   _FoodItem(icon: "☕", title: "Kopi & Teh", desc: "Boleh (Tanpa Gula & Susu)"),
+                   Divider(),
+                   _FoodItem(icon: "❌", title: "Hindari", desc: "Minuman manis, Soda, Susu"),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _FoodItem extends StatelessWidget {
+  final String icon;
+  final String title;
+  final String desc;
+
+  const _FoodItem({required this.icon, required this.title, required this.desc});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          Text(icon, style: const TextStyle(fontSize: 24)),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(desc, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
@@ -167,3 +281,4 @@ class _MacroTile extends StatelessWidget {
     );
   }
 }
+
