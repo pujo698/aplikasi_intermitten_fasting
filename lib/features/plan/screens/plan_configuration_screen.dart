@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../services/notification_service.dart';
 import '../../services/storage_service.dart';
 import '../../fasting/models/fasting_model.dart'; // Reuse model if needed or pass raw data
+import '../../../core/theme/app_colors.dart';
 
 class PlanConfigurationScreen extends StatefulWidget {
   final String planName;

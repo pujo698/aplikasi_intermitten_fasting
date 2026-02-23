@@ -65,7 +65,6 @@ class _PlanScreenState extends State<PlanScreen> {
         elevation: 0,
         centerTitle: false,
         actions: [
-        actions: [
           IconButton(icon: Icon(Icons.refresh, color: Theme.of(context).iconTheme.color?.withOpacity(0.5)), onPressed: _loadMealPlan)
         ],
       ),

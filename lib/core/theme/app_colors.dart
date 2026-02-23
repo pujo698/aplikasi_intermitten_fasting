@@ -13,10 +13,13 @@ class AppColors {
   
   // Cohesive set:
   static const Color primary = Color(0xFF48CAE4);      // Vibrant Pastel Blue
+  static const Color primaryLight = Color(0xFF90E0EF); // Softer Blue
+  static const Color primaryDark = Color(0xFF0077B6);  // Deeper Blue
   static const Color secondary = Color(0xFF90E0EF);    // Softer Blue
   static const Color tertiary = Color(0xFFADE8F4);     // Very pale blue
   static const Color accentGreen = Color(0xFFcaf0f8);  // Icy blue-white
   static const Color accentNeon = Color(0xFF00B4D8);   // Stronger blue for accents
+  static const Color accent = Color(0xFF00B4D8);       // Main accent color
 
   // === Text ===
   static const Color textPrimary = Color(0xFF023E8A);  // Deep Blue-Black for readability on pastel
