@@ -3,6 +3,38 @@ import 'dart:convert';
 import '../fasting/models/fasting_record.dart';
   
 class StorageService {
+  static const String _keyFasting = 'fasting_data';
+  static const String _keyRecords = 'fasting_records';
+  static const String _keyProfile = 'user_profile';
+  static const String _keyWater = 'water_daily'; // NEW
+
+  // ... (Existing methods)
+
+  /// Water Tracker
+  static Future<void> saveWater(int ml) async {
+    final prefs = await SharedPreferences.getInstance();
+    // Reset if new day (simple check)
+    final lastDate = prefs.getString('${_keyWater}_date');
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    
+    if (lastDate != today) {
+       await prefs.setString('${_keyWater}_date', today);
+       await prefs.setInt(_keyWater, ml);
+    } else {
+       await prefs.setInt(_keyWater, ml);
+    }
+  }
+
+  static Future<int> loadWater() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lastDate = prefs.getString('${_keyWater}_date');
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    
+    if (lastDate != today) {
+      return 0; // New day, reset
+    }
+    return prefs.getInt(_keyWater) ?? 0;
+  }
   static const _startEating = 'start_eating';
   static const _eatingHours = 'eating_hours';
 

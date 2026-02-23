@@ -122,4 +122,18 @@ class DietCalculator {
     
     return (diff / monthlyLoss).ceil();
   }
+
+  /// 5️⃣ BMI Calculator
+  static double calculateBMI(double weight, double heightCm) {
+    // BMI = kg / m^2
+    double heightM = heightCm / 100;
+    return weight / (heightM * heightM);
+  }
+
+  static String getBMICategory(double bmi) {
+    if (bmi < 18.5) return "Underweight (Kurus)";
+    if (bmi < 24.9) return "Normal (Ideal)";
+    if (bmi < 29.9) return "Overweight (Gemuk)";
+    return "Obese (Obesitas)";
+  }
 }

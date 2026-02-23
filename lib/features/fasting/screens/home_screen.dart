@@ -11,6 +11,9 @@ import '../../plan/screens/plan_screen.dart';
 import '../../services/storage_service.dart';
 import '../../services/notification_service.dart';
 import '../../../core/theme/app_colors.dart';
+import '../widgets/water_tracker_card.dart';
+import '../../recipes/screens/recipe_screen.dart';
+import '../../activity/widgets/step_tracker_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -187,6 +190,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ],
                             ),
+
+                            const SizedBox(height: 32),
+                            const StepTrackerCard(), 
+                            const SizedBox(height: 16),
+                            const WaterTrackerCard(), 
+                            const SizedBox(height: 32),
                           ],
                         ),
                       ),
@@ -210,7 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const Scaffold(body: Center(child: Text("Fitur Mempelajari segera hadir"))),
 
             /// [3] RESEP
-            const Scaffold(body: Center(child: Text("Fitur Resep segera hadir"))),
+            const RecipeListScreen(), // UPDATED
 
             /// [4] SAYA (Profile)
             const ProfileScreen(),

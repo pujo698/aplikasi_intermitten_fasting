@@ -102,12 +102,12 @@ class _PlanConfigurationScreenState extends State<PlanConfigurationScreen> {
     final fastingHours = 24 - widget.eatingHours;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).cardColor,
       appBar: AppBar(
         title: Text("Atur ${widget.planName}"),
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: Theme.of(context).cardColor,
+        foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -116,12 +116,12 @@ class _PlanConfigurationScreenState extends State<PlanConfigurationScreen> {
           children: [
              Text(
               "Kapan Anda ingin mulai makan?",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueGrey[900]),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
               "Kami akan mengatur notifikasi puasa berdasarkan waktu makan Anda.",
-              style: TextStyle(color: Colors.grey[600]),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 32),
 
@@ -131,9 +131,9 @@ class _PlanConfigurationScreenState extends State<PlanConfigurationScreen> {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
                 decoration: BoxDecoration(
-                  color: Colors.blue[50],
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                  border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -141,14 +141,14 @@ class _PlanConfigurationScreenState extends State<PlanConfigurationScreen> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("Mulai Makan", style: TextStyle(color: Colors.blueGrey)),
+                        Text("Mulai Makan", style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
                         Text(
                           _startTime.format(context),
-                          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.blue),
+                          style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
                         ),
                       ],
                     ),
-                    const Icon(Icons.edit, color: Colors.blue),
+                    Icon(Icons.edit, color: Theme.of(context).colorScheme.primary),
                   ],
                 ),
               ),
@@ -166,7 +166,7 @@ class _PlanConfigurationScreenState extends State<PlanConfigurationScreen> {
                     "${widget.eatingHours} Jam", 
                     "${_startTime.format(context)} - ${endTime.format(context)}",
                     Icons.restaurant,
-                    Colors.orange
+                    AppColors.warning
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -177,7 +177,7 @@ class _PlanConfigurationScreenState extends State<PlanConfigurationScreen> {
                     "$fastingHours Jam", 
                     "${endTime.format(context)} - ${_startTime.format(context)}",
                     Icons.bolt,
-                    Colors.green
+                    AppColors.success
                   ),
                 ),
               ],
@@ -191,7 +191,7 @@ class _PlanConfigurationScreenState extends State<PlanConfigurationScreen> {
               child: ElevatedButton(
                 onPressed: _savePlan,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -213,9 +213,9 @@ class _PlanConfigurationScreenState extends State<PlanConfigurationScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.1)),
       ),
       child: Column(
         children: [
@@ -228,11 +228,11 @@ class _PlanConfigurationScreenState extends State<PlanConfigurationScreen> {
             child: Icon(icon, color: color, size: 24),
           ),
           const SizedBox(height: 12),
-          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+          Text(title, style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 4),
           Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(subValue, style: const TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+          Text(subValue, style: Theme.of(context).textTheme.bodySmall, textAlign: TextAlign.center),
         ],
       ),
     );

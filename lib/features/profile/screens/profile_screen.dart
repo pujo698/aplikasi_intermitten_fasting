@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../services/storage_service.dart';
 import '../../diet/screens/diet_input_screen.dart';
+import '../../diet/controllers/diet_calculator.dart';
 import '../../../core/theme/app_colors.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -191,6 +192,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 20),
 
+            // BMI Card
+             if (currentWeight != "-" && currentHeight != "-")
+                _buildBMICard(),
+
+            const SizedBox(height: 20),
+
             // Prestasi / Badges
 
             
@@ -260,5 +267,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildBMICard() {
+    // Parse weight and height
+    double w = double.tryParse(currentWeight.replaceAll('kg', '')) ?? 0;
+    double h = double.tryParse(currentHeight.replaceAll('cm', '')) ?? 0;
+    
+    if (w == 0 || h == 0) return const SizedBox.shrink();
 
+    double bmi = DietCalculator.calculateBMI(w, h);
+    String category = DietCalculator.getBMICategory(bmi);
+    Color color = Colors.green;
+    
+    if (bmi < 18.5) color = Colors.orange;
+    if (bmi >= 25) color = Colors.orange;
+    if (bmi >= 30) color = Colors.red;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3)),
+        boxShadow: [
+           BoxShadow(color: color.withOpacity(0.1), blurRadius: 10, offset: const Offset(0,4))
+        ]
+      ),
+      child: Column(
+        children: [
+           Text("BMI Score", style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+           const SizedBox(height: 4),
+           Text(bmi.toStringAsFixed(1), style: TextStyle(color: color, fontSize: 32, fontWeight: FontWeight.bold)),
+           Text(category, style: TextStyle(color: color, fontWeight: FontWeight.w600)),
+           const SizedBox(height: 8),
+           ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: (bmi / 40).clamp(0.0, 1.0),
+                backgroundColor: Colors.grey[200],
+                valueColor: AlwaysStoppedAnimation(color),
+                minHeight: 8,
+              ),
+           ),
+        ],
+      ),
+    );
+  }
 }
