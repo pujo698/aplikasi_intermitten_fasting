@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../data/recipe_data.dart';
 import '../services/recipe_service.dart';
+import '../services/ai_service.dart';
 
 class AddRecipeScreen extends StatefulWidget {
   const AddRecipeScreen({super.key});
@@ -28,12 +29,63 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
 
-  Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  Future<void> _pickImage(ImageSource source) async {
+    final XFile? image = await _picker.pickImage(source: source);
     if (image != null) {
       setState(() {
         _selectedImage = File(image.path);
       });
+    }
+  }
+
+  bool _isAnalyzing = false;
+
+  Future<void> _analyzeWithAi() async {
+    if (_selectedImage == null) return;
+    
+    setState(() {
+      _isAnalyzing = true;
+    });
+
+    try {
+      final aiResult = await AiService.analyzeRecipeFromImage(_selectedImage!);
+      
+      if (aiResult != null && mounted) {
+        setState(() {
+          _titleController.text = aiResult['title'] ?? '';
+          _descController.text = aiResult['description'] ?? '';
+          _caloriesController.text = aiResult['calories']?.toString() ?? '';
+          _proteinController.text = aiResult['protein']?.toString() ?? '';
+          _fatController.text = aiResult['fat']?.toString() ?? '';
+          _carbsController.text = aiResult['carbs']?.toString() ?? '';
+          
+          // Clear and refill ingredients
+          _ingredientControllers.clear();
+          if (aiResult['ingredients'] is List) {
+            for (var ing in aiResult['ingredients']) {
+              _ingredientControllers.add(TextEditingController(text: ing.toString()));
+            }
+          }
+          if (_ingredientControllers.isEmpty) {
+            _addIngredientField();
+          }
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Berhasil menganalisis gambar!'), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal menganalisis: \$e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isAnalyzing = false;
+        });
+      }
     }
   }
 
@@ -144,32 +196,78 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
           children: [
             _buildSectionTitle('Info Dasar'),
             
-            // Image Picker
-            GestureDetector(
-              onTap: _pickImage,
-              child: Container(
-                height: 200,
-                width: double.infinity,
-                margin: const EdgeInsets.only(bottom: 20),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(12),
-                  image: _selectedImage != null 
-                    ? DecorationImage(image: FileImage(_selectedImage!), fit: BoxFit.cover)
-                    : null
+            // Image Picker Section
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _pickImage(ImageSource.camera),
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text('Kamera'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryLight,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
                 ),
-                child: _selectedImage == null 
-                  ? const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.camera_alt, size: 50, color: Colors.grey),
-                        SizedBox(height: 8),
-                        Text("Upload Foto Makanan", style: TextStyle(color: Colors.grey))
-                      ],
-                    )
-                  : null,
-              ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => _pickImage(ImageSource.gallery),
+                    icon: const Icon(Icons.photo_library),
+                    label: const Text('Galeri'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryDark,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 12),
+
+            Container(
+              height: 200,
+              width: double.infinity,
+              margin: const EdgeInsets.only(bottom: 20),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(12),
+                image: _selectedImage != null 
+                  ? DecorationImage(image: FileImage(_selectedImage!), fit: BoxFit.cover)
+                  : null
+              ),
+              child: _selectedImage == null 
+                ? const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.image, size: 50, color: Colors.grey),
+                      SizedBox(height: 8),
+                      Text("Pilih foto makanan", style: TextStyle(color: Colors.grey))
+                    ],
+                  )
+                : null,
+            ),
+            
+            // AI Analyze Button
+            if (_selectedImage != null) ...[
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _isAnalyzing ? null : _analyzeWithAi,
+                  icon: _isAnalyzing 
+                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    : const Icon(Icons.auto_awesome),
+                  label: Text(_isAnalyzing ? 'Sedang Menganalisis...' : 'Hitung Kalori dengan AI'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple[400],
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
 
             _buildTextField(_titleController, 'Nama Masakan', required: true),
             _buildTextField(_descController, 'Deskripsi Singkat', maxLines: 2, required: true),
