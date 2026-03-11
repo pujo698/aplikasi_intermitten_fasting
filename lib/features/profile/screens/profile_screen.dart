@@ -4,6 +4,7 @@ import '../../services/storage_service.dart';
 import '../../diet/screens/diet_input_screen.dart';
 import '../../diet/controllers/diet_calculator.dart';
 import '../../../core/theme/app_colors.dart';
+import '../widgets/weekly_progress_chart.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -198,9 +199,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 20),
 
-            // Prestasi / Badges
+            // Progres Mingguan
+            const WeeklyProgressChart(),
 
-            
             const SizedBox(height: 24),
             
             // 🚨 Disclaimer Medis
